@@ -1,0 +1,3407 @@
+{
+    "_comment_platform": "QFX5241-64 (Garnet 0x0F1C) PDDF device descriptor \u2014 derived from qfx5241-64-rcb.dts and accton-drivers/qfx5241/",
+    "_comment_bus_numbers": "SMBus iSMT (pci-0000-00-1f.4) = i2c-0. PCA9548@0x78 (MUX1) and PCA9548@0x70 (MUX2) hang off it. Port I2C buses are individual ocores-i2c-garnet controllers registered by qfx5241-jnx-garnet-core from pci-0000-02-00.0. Verify bus numbers with 'i2cdetect -l' on first boot.",
+    "PLATFORM": {
+        "num_psus": 2,
+        "num_fantrays": 4,
+        "num_fans_pertray": 2,
+        "num_ports": 66,
+        "num_temps": 8,
+        "num_voltage_sensors": 6,
+        "num_current_sensors": 6,
+        "num_components": 13,
+        "lanes_per_port": "4",
+        "default_speed": "400000",
+        "mux_driver": "qfx5241_mux",
+        "pddf_dev_types": {
+            "PSU": [
+                "psu_pmbus"
+            ],
+            "FAN": [
+                "fan_ctrl"
+            ],
+            "PORT_MODULE": [
+                "optoe1",
+                "optoe2",
+                "optoe3"
+            ]
+        },
+        "pddf_kos": [
+            "pddf_client_module",
+            "pddf_mux_module",
+            "pddf_xcvr_module",
+            "pddf_psu_module",
+            "pddf_psu_driver_module",
+            "pddf_fan_module",
+            "pddf_fan_driver_module",
+            "pddf_led_module",
+            "pddf_sysstatus_module"
+        ],
+        "std_kos": [
+            "i2c-dev",
+            "i2c-mux",
+            "optoe",
+            "at24"
+        ],
+        "pddf_drv_kos": [],
+        "custom_kos": [
+            "jnx-xrefpga-lpcm",
+            "qfx5241-jnx-garnet-core",
+            "qfx5241-gpio-garnet",
+            "qfx5241-i2c-ocores-garnet",
+            "qfx5241-i2c-mux",
+            "qfx5241-jnx-garnet-fancpld",
+            "qfx5241-jnx-s32afc-gpio-presence",
+            "qfx5241-leds",
+            "qfx5241-leds-jnx-i2cs",
+            "qfx5241-jnx-garnet-psu",
+            "lm75",
+            "ucd9000",
+            "xdpe152c4"
+        ]
+    },
+    "_comment_topology": "I2C bus topology: iSMT SMBus + two PCA9548 MUXes + one sub-MUX. Port I2C buses via ocores-i2c-garnet from CFPGA (pci-0000-02-00.0).",
+    "SYSTEM": {
+        "dev_info": {
+            "device_type": "CPU",
+            "device_name": "ROOT_COMPLEX",
+            "device_parent": null
+        },
+        "i2c": {
+            "CONTROLLERS": [
+                {
+                    "dev_name": "i2c-0",
+                    "dev": "SMBUS_I801"
+                }
+            ]
+        }
+    },
+    "_comment_smbus": "Intel iSMT SMBus (pci-0000-00-1f.4): two PCA9548 muxes @0x78 and @0x70, CPU-board EEPROM @0x51.",
+    "SMBUS_I801": {
+        "dev_info": {
+            "device_type": "SMBUS",
+            "device_name": "SMBUS_I801",
+            "device_parent": "SYSTEM"
+        },
+        "i2c": {
+            "topo_info": {
+                "dev_addr": "0x0"
+            },
+            "DEVICES": [
+                {
+                    "dev": "MUX1"
+                },
+                {
+                    "dev": "MUX2"
+                }
+            ]
+        }
+    },
+    "_comment_mux1": "PCA9548 @0x78 on iSMT: Ch5=VRM ASIC power rails (xdpe12284/xdpe132g5).",
+    "MUX1": {
+        "dev_info": {
+            "device_type": "MUX",
+            "device_name": "MUX1",
+            "device_parent": "SMBUS_I801"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x0",
+                "dev_addr": "0x78",
+                "dev_type": "pca9548_jnx"
+            },
+            "dev_attr": {
+                "virt_bus": "0x10"
+            },
+            "channel": [
+                {
+                    "chn": "5",
+                    "dev": "VRM1"
+                },
+                {
+                    "chn": "5",
+                    "dev": "VRM2"
+                },
+                {
+                    "chn": "5",
+                    "dev": "VRM3"
+                },
+                {
+                    "chn": "5",
+                    "dev": "VRM4"
+                },
+                {
+                    "chn": "5",
+                    "dev": "VRM5"
+                },
+                {
+                    "chn": "5",
+                    "dev": "VRM6"
+                }
+            ]
+        }
+    },
+    "_comment_mux2": "PCA9548 @0x70 on iSMT: Ch0=FAN-CPLD+sub-MUX, Ch1=PSU I2C, Ch2-Ch3=MB temp sensors, Ch4=UCD90320.",
+    "MUX2": {
+        "dev_info": {
+            "device_type": "MUX",
+            "device_name": "MUX2",
+            "device_parent": "SMBUS_I801"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x0",
+                "dev_addr": "0x70",
+                "dev_type": "pca9548_jnx"
+            },
+            "dev_attr": {
+                "virt_bus": "0x20"
+            },
+            "channel": [
+                {
+                    "chn": "0",
+                    "dev": "FAN_CTRL"
+                },
+                {
+                    "chn": "0",
+                    "dev": "MUX3"
+                },
+                {
+                    "chn": "1",
+                    "dev": "PSU1"
+                },
+                {
+                    "chn": "1",
+                    "dev": "PSU2"
+                },
+                {
+                    "chn": "2",
+                    "dev": "TEMP1"
+                },
+                {
+                    "chn": "2",
+                    "dev": "TEMP2"
+                },
+                {
+                    "chn": "2",
+                    "dev": "TEMP3"
+                },
+                {
+                    "chn": "2",
+                    "dev": "TEMP4"
+                },
+                {
+                    "chn": "3",
+                    "dev": "TEMP5"
+                },
+                {
+                    "chn": "3",
+                    "dev": "TEMP6"
+                },
+                {
+                    "chn": "4",
+                    "dev": "UCD90320"
+                }
+            ]
+        }
+    },
+    "_comment_mux3": "PCA9548 @0x76 under MUX2 Ch0 (bus 0x20): Ch0=fan-board temp left (0x4D), Ch1=fan-board temp right (0x4E).",
+    "MUX3": {
+        "dev_info": {
+            "device_type": "MUX",
+            "device_name": "MUX3",
+            "device_parent": "MUX2"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x20",
+                "dev_addr": "0x76",
+                "dev_type": "pca9548_jnx"
+            },
+            "dev_attr": {
+                "virt_bus": "0x30"
+            },
+            "channel": [
+                {
+                    "chn": "0",
+                    "dev": "TEMP7"
+                },
+                {
+                    "chn": "1",
+                    "dev": "TEMP8"
+                }
+            ]
+        }
+    },
+    "_comment_vrm": "ASIC VRMs on MUX1 Ch5 (bus 0x15): 5x Infineon xdpe12284 + 1x xdpe132g5. Used for voltage/thermal monitoring.",
+    "VRM1": {
+        "dev_info": {
+            "device_type": "DCDC",
+            "device_name": "VRM1",
+            "device_parent": "MUX1"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x15",
+                "dev_addr": "0x18",
+                "dev_type": "xdpe12284"
+            },
+            "dev_attr": {
+                "display_name": "ASIC VRM OPTICS_GRP3_3V3 xdpe12284 @0x18"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "in1_input",
+                    "attr_devaddr": "0x18",
+                    "attr_devtype": "hwmon",
+                    "attr_offset": "0x0",
+                    "attr_mask": "0x0",
+                    "attr_len": 1
+                }
+            ]
+        }
+    },
+    "VRM2": {
+        "dev_info": {
+            "device_type": "DCDC",
+            "device_name": "VRM2",
+            "device_parent": "MUX1"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x15",
+                "dev_addr": "0x2a",
+                "dev_type": "xdpe12284"
+            },
+            "dev_attr": {
+                "display_name": "ASIC VRM OPTICS_GRP2_3V3 xdpe12284 @0x2A"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "in1_input",
+                    "attr_devaddr": "0x2a",
+                    "attr_devtype": "hwmon",
+                    "attr_offset": "0x0",
+                    "attr_mask": "0x0",
+                    "attr_len": 1
+                }
+            ]
+        }
+    },
+    "VRM3": {
+        "dev_info": {
+            "device_type": "DCDC",
+            "device_name": "VRM3",
+            "device_parent": "MUX1"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x15",
+                "dev_addr": "0x2e",
+                "dev_type": "xdpe12284"
+            },
+            "dev_attr": {
+                "display_name": "ASIC VRM OPTICS_GRP1_3V3 xdpe12284 @0x2E"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "in1_input",
+                    "attr_devaddr": "0x2e",
+                    "attr_devtype": "hwmon",
+                    "attr_offset": "0x0",
+                    "attr_mask": "0x0",
+                    "attr_len": 1
+                }
+            ]
+        }
+    },
+    "VRM4": {
+        "dev_info": {
+            "device_type": "DCDC",
+            "device_name": "VRM4",
+            "device_parent": "MUX1"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x15",
+                "dev_addr": "0x30",
+                "dev_type": "xdpe12284"
+            },
+            "dev_attr": {
+                "display_name": "ASIC VRM TRVDD1_0V9_0V75 xdpe12284 @0x30"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "in1_input",
+                    "attr_devaddr": "0x30",
+                    "attr_devtype": "hwmon",
+                    "attr_offset": "0x0",
+                    "attr_mask": "0x0",
+                    "attr_len": 1
+                }
+            ]
+        }
+    },
+    "VRM5": {
+        "dev_info": {
+            "device_type": "DCDC",
+            "device_name": "VRM5",
+            "device_parent": "MUX1"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x15",
+                "dev_addr": "0x36",
+                "dev_type": "xdpe12284"
+            },
+            "dev_attr": {
+                "display_name": "ASIC VRM TRVDD0_0V9_0V75 xdpe12284 @0x36"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "in1_input",
+                    "attr_devaddr": "0x36",
+                    "attr_devtype": "hwmon",
+                    "attr_offset": "0x0",
+                    "attr_mask": "0x0",
+                    "attr_len": 1
+                }
+            ]
+        }
+    },
+    "VRM6": {
+        "dev_info": {
+            "device_type": "DCDC",
+            "device_name": "VRM6",
+            "device_parent": "MUX1"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x15",
+                "dev_addr": "0x40",
+                "dev_type": "xdpe12284"
+            },
+            "dev_attr": {
+                "display_name": "CPU VRM xdpe132g5 @0x40"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "in1_input",
+                    "attr_devaddr": "0x40",
+                    "attr_devtype": "hwmon",
+                    "attr_offset": "0x0",
+                    "attr_mask": "0x0",
+                    "attr_len": 1
+                }
+            ]
+        }
+    },
+    "_comment_ucd": "UCD90320 power sequencer @0x11 on MUX2 Ch4 (bus 0x24). Provides rail sequencing, not directly monitored by PDDF.",
+    "UCD90320": {
+        "dev_info": {
+            "device_type": "DCDC",
+            "device_name": "UCD90320",
+            "device_parent": "MUX2"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x24",
+                "dev_addr": "0x11",
+                "dev_type": "ucd90320"
+            },
+            "dev_attr": {
+                "display_name": "Power sequencer UCD90320 @0x11"
+            },
+            "attr_list": []
+        }
+    },
+    "_comment_fan": "Fan: garnet-fancpld @0x33 on MUX2 Ch0 (bus 0x20). 4 trays x 2 fans. Fan presence via s32afc-fan-presence GPIO: tray0=bit7, tray1=bit6, tray2=bit5, tray3=bit4 (register 0x07, active-high).",
+    "FAN_CTRL": {
+        "dev_info": {
+            "device_type": "FAN",
+            "device_name": "FAN_CTRL",
+            "device_parent": "MUX2"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x20",
+                "dev_addr": "0x33",
+                "dev_type": "garnet-fancpld"
+            },
+            "dev_attr": {
+                "display_name": "Fan Controller garnet-fancpld",
+                "num_fans": "8",
+                "num_fantrays": "4",
+                "num_fans_pertray": "2",
+                "hwmon_name": "qfx_fan",
+                "max_front_rpm": "29000",
+                "max_rear_rpm": "29000",
+                "speed_tolerance": "10",
+                "pwm_max": "255",
+                "direction": "exhaust",
+                "model": "JNX-FAN-GARNET-QFX5241",
+                "gpio_label": "fan-presence",
+                "gpio_tray0_offset": "7",
+                "gpio_tray1_offset": "6",
+                "gpio_tray2_offset": "5",
+                "gpio_tray3_offset": "4",
+                "led_ok_pattern": "fan{}-status-ok",
+                "led_fail_pattern": "fan{}-status-fail"
+            },
+            "attr_list": []
+        }
+    },
+    "_comment_psu": "PSUs: shared psmi2c bus = MUX2 Ch1 (bus 0x21). PSU1 EEPROM @0x50 / PMBus @0x58; PSU2 EEPROM @0x51 / PMBus @0x59. Presence via garnet-psu platform driver sysfs (psu0_present/psu1_present). garnet64 FPGA has no irq-tmc GPIO chip.",
+    "PSU1": {
+        "dev_info": {
+            "device_type": "PSU",
+            "device_name": "PSU1",
+            "device_parent": "MUX2"
+        },
+        "dev_attr": {
+            "dev_idx": "1",
+            "num_psu_fans": "1",
+            "num_psu_thermals": "1"
+        },
+        "i2c": {
+            "interface": [
+                {
+                    "itf": "pmbus",
+                    "dev": "PSU1_PMBUS"
+                }
+            ]
+        }
+    },
+    "PSU1_PMBUS": {
+        "dev_info": {
+            "device_type": "PSU-PMBUS",
+            "device_name": "PSU1_PMBUS",
+            "device_parent": "MUX2",
+            "virt_parent": "PSU1"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x21",
+                "dev_addr": "0x58",
+                "dev_type": "psu_pmbus"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "psu_model_name",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x9a",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff"
+                },
+                {
+                    "attr_name": "psu_serial_num",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x9e",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0x00"
+                },
+                {
+                    "attr_name": "psu_mfr_id",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x99",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0x00"
+                },
+                {
+                    "attr_name": "psu_fan_dir",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x9a",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff"
+                },
+                {
+                    "attr_name": "psu_v_out",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x8b",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_data_format": "linear16",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_i_out",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x8c",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_p_out",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x96",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_v_in",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x88",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_i_in",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x89",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_p_in",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x97",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_fan1_speed_rpm",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x90",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_temp1_input",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x8d",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_temp1_high_threshold",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0xc0",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_v_out_max",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0xa5",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_data_format": "linear16",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_v_out_min",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0xa4",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_data_format": "linear16",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_p_out_max",
+                    "attr_devaddr": "0x58",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0xa7",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                }
+            ]
+        }
+    },
+    "PSU2": {
+        "dev_info": {
+            "device_type": "PSU",
+            "device_name": "PSU2",
+            "device_parent": "MUX2"
+        },
+        "dev_attr": {
+            "dev_idx": "2",
+            "num_psu_fans": "1",
+            "num_psu_thermals": "1"
+        },
+        "i2c": {
+            "interface": [
+                {
+                    "itf": "pmbus",
+                    "dev": "PSU2_PMBUS"
+                }
+            ]
+        }
+    },
+    "PSU2_PMBUS": {
+        "dev_info": {
+            "device_type": "PSU-PMBUS",
+            "device_name": "PSU2_PMBUS",
+            "device_parent": "MUX2",
+            "virt_parent": "PSU2"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x21",
+                "dev_addr": "0x59",
+                "dev_type": "psu_pmbus"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "psu_model_name",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x9a",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff"
+                },
+                {
+                    "attr_name": "psu_serial_num",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x9e",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0x00"
+                },
+                {
+                    "attr_name": "psu_mfr_id",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x99",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0x00"
+                },
+                {
+                    "attr_name": "psu_fan_dir",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x9a",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff"
+                },
+                {
+                    "attr_name": "psu_v_out",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x8b",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_data_format": "linear16",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_i_out",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x8c",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_p_out",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x96",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_v_in",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x88",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_i_in",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x89",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_p_in",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x97",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_fan1_speed_rpm",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x90",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_temp1_input",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0x8d",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_temp1_high_threshold",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0xc0",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_v_out_max",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0xa5",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_data_format": "linear16",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_v_out_min",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0xa4",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_data_format": "linear16",
+                    "attr_len": "2"
+                },
+                {
+                    "attr_name": "psu_p_out_max",
+                    "attr_devaddr": "0x59",
+                    "attr_devtype": "pmbus",
+                    "attr_offset": "0xa7",
+                    "attr_mask": "0x0",
+                    "attr_cmpval": "0xff",
+                    "attr_len": "2"
+                }
+            ]
+        }
+    },
+    "_comment_temp": "Temperature sensors (8): lm75 @0x48/0x4A/0x4B/0x4C on MUX2 Ch2 (bus 0x22), lm75 @0x49/0x4D on MUX2 Ch3 (bus 0x23), lm75 @0x4D/0x4E on MUX3 Ch0/Ch1 (buses 0x30/0x31). Thresholds from thermal_data.json.",
+    "TEMP1": {
+        "dev_info": {
+            "device_type": "TEMP_SENSOR",
+            "device_name": "TEMP1",
+            "device_parent": "MUX2"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x22",
+                "dev_addr": "0x48",
+                "dev_type": "lm75"
+            },
+            "dev_attr": {
+                "display_name": "FPC 0 MB Middle Right Rear",
+                "wtc": "45.0",
+                "wt": "50.0",
+                "high_threshold": "75.0",
+                "high_threshold_bad_fan": "72.0",
+                "yat": "80.0",
+                "yat_bad_fan": "77.0",
+                "rat": "85.0",
+                "rat_bad_fan": "82.0",
+                "fire_threshold": "90.0"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "temp1_input",
+                    "attr_devaddr": "0x48",
+                    "attr_devtype": "hwmon",
+                    "attr_offset": "0x0",
+                    "attr_mask": "0x0",
+                    "attr_len": 1
+                }
+            ]
+        }
+    },
+    "TEMP2": {
+        "dev_info": {
+            "device_type": "TEMP_SENSOR",
+            "device_name": "TEMP2",
+            "device_parent": "MUX2"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x22",
+                "dev_addr": "0x4a",
+                "dev_type": "lm75"
+            },
+            "dev_attr": {
+                "display_name": "FPC 0 MB Middle Left Rear",
+                "wtc": "45.0",
+                "wt": "50.0",
+                "high_threshold": "75.0",
+                "high_threshold_bad_fan": "72.0",
+                "yat": "80.0",
+                "yat_bad_fan": "77.0",
+                "rat": "85.0",
+                "rat_bad_fan": "82.0",
+                "fire_threshold": "90.0"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "temp1_input",
+                    "attr_devaddr": "0x4a",
+                    "attr_devtype": "hwmon",
+                    "attr_offset": "0x0",
+                    "attr_mask": "0x0",
+                    "attr_len": 1
+                }
+            ]
+        }
+    },
+    "TEMP3": {
+        "dev_info": {
+            "device_type": "TEMP_SENSOR",
+            "device_name": "TEMP3",
+            "device_parent": "MUX2"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x22",
+                "dev_addr": "0x4b",
+                "dev_type": "lm75"
+            },
+            "dev_attr": {
+                "display_name": "FPC 0 MB Left Rear",
+                "wtc": "45.0",
+                "wt": "50.0",
+                "high_threshold": "75.0",
+                "high_threshold_bad_fan": "72.0",
+                "yat": "80.0",
+                "yat_bad_fan": "77.0",
+                "rat": "85.0",
+                "rat_bad_fan": "82.0",
+                "fire_threshold": "90.0"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "temp1_input",
+                    "attr_devaddr": "0x4b",
+                    "attr_devtype": "hwmon",
+                    "attr_offset": "0x0",
+                    "attr_mask": "0x0",
+                    "attr_len": 1
+                }
+            ]
+        }
+    },
+    "TEMP4": {
+        "dev_info": {
+            "device_type": "TEMP_SENSOR",
+            "device_name": "TEMP4",
+            "device_parent": "MUX2"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x22",
+                "dev_addr": "0x4c",
+                "dev_type": "lm75"
+            },
+            "dev_attr": {
+                "display_name": "FPC 0 MB Left Front",
+                "wtc": "45.0",
+                "wt": "50.0",
+                "high_threshold": "75.0",
+                "high_threshold_bad_fan": "72.0",
+                "yat": "80.0",
+                "yat_bad_fan": "77.0",
+                "rat": "85.0",
+                "rat_bad_fan": "82.0",
+                "fire_threshold": "90.0"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "temp1_input",
+                    "attr_devaddr": "0x4c",
+                    "attr_devtype": "hwmon",
+                    "attr_offset": "0x0",
+                    "attr_mask": "0x0",
+                    "attr_len": 1
+                }
+            ]
+        }
+    },
+    "TEMP5": {
+        "dev_info": {
+            "device_type": "TEMP_SENSOR",
+            "device_name": "TEMP5",
+            "device_parent": "MUX2"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x23",
+                "dev_addr": "0x49",
+                "dev_type": "lm75"
+            },
+            "dev_attr": {
+                "display_name": "FPC 0 MB Right Rear",
+                "wtc": "45.0",
+                "wt": "50.0",
+                "high_threshold": "75.0",
+                "high_threshold_bad_fan": "72.0",
+                "yat": "80.0",
+                "yat_bad_fan": "77.0",
+                "rat": "85.0",
+                "rat_bad_fan": "82.0",
+                "fire_threshold": "90.0"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "temp1_input",
+                    "attr_devaddr": "0x49",
+                    "attr_devtype": "hwmon",
+                    "attr_offset": "0x0",
+                    "attr_mask": "0x0",
+                    "attr_len": 1
+                }
+            ]
+        }
+    },
+    "TEMP6": {
+        "dev_info": {
+            "device_type": "TEMP_SENSOR",
+            "device_name": "TEMP6",
+            "device_parent": "MUX2"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x23",
+                "dev_addr": "0x4d",
+                "dev_type": "lm75"
+            },
+            "dev_attr": {
+                "display_name": "FPC 0 MB Right Front",
+                "wtc": "45.0",
+                "wt": "50.0",
+                "high_threshold": "75.0",
+                "high_threshold_bad_fan": "72.0",
+                "yat": "80.0",
+                "yat_bad_fan": "77.0",
+                "rat": "85.0",
+                "rat_bad_fan": "82.0",
+                "fire_threshold": "90.0"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "temp1_input",
+                    "attr_devaddr": "0x4d",
+                    "attr_devtype": "hwmon",
+                    "attr_offset": "0x0",
+                    "attr_mask": "0x0",
+                    "attr_len": 1
+                }
+            ]
+        }
+    },
+    "TEMP7": {
+        "dev_info": {
+            "device_type": "TEMP_SENSOR",
+            "device_name": "TEMP7",
+            "device_parent": "MUX3"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x30",
+                "dev_addr": "0x4d",
+                "dev_type": "lm75"
+            },
+            "dev_attr": {
+                "display_name": "FPC 0 FB Exhaust Left",
+                "wtc": "40.0",
+                "wt": "45.0",
+                "high_threshold": "60.0",
+                "high_threshold_bad_fan": "57.0",
+                "yat": "65.0",
+                "yat_bad_fan": "62.0",
+                "rat": "70.0",
+                "rat_bad_fan": "67.0",
+                "fire_threshold": "75.0"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "temp1_input",
+                    "attr_devaddr": "0x4d",
+                    "attr_devtype": "hwmon",
+                    "attr_offset": "0x0",
+                    "attr_mask": "0x0",
+                    "attr_len": 1
+                }
+            ]
+        }
+    },
+    "TEMP8": {
+        "dev_info": {
+            "device_type": "TEMP_SENSOR",
+            "device_name": "TEMP8",
+            "device_parent": "MUX3"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x31",
+                "dev_addr": "0x4e",
+                "dev_type": "lm75"
+            },
+            "dev_attr": {
+                "display_name": "FPC 0 FB Exhaust Right",
+                "wtc": "40.0",
+                "wt": "45.0",
+                "high_threshold": "60.0",
+                "high_threshold_bad_fan": "57.0",
+                "yat": "65.0",
+                "yat_bad_fan": "62.0",
+                "rat": "70.0",
+                "rat_bad_fan": "67.0",
+                "fire_threshold": "75.0"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "temp1_input",
+                    "attr_devaddr": "0x4e",
+                    "attr_devtype": "hwmon",
+                    "attr_offset": "0x0",
+                    "attr_mask": "0x0",
+                    "attr_len": 1
+                }
+            ]
+        }
+    },
+    "_comment_led": "System LEDs are provided directly via /sys/class/leds; PDDF LED creation is bypassed for now. qfx5241-leds binds the CFPGA 'fpga-system-leds' mfd cell (system LED); qfx5241-leds-jnx-i2cs binds the fancpld 'leds-i2cs' cell (fan LED).",
+    "_comment_sfp": "Port control: 64 QSFP-DD (optoe3, ports 1-64) + 2 SFP28 (optoe2, ports 65-66) via CFPGA (pci-0000-02-00.0). Per-port I2C buses from ocores-i2c-garnet (CPLD1: ports 0-31, CPLD2: ports 32-63 + SFP). GPIO banks from garnet-gpio-gmc: CPLD1 = presence-cpld0/lpmod-cpld0/reset-cpld0, CPLD2 = presence-cpld1/lpmod-cpld1/reset-cpld1, SFP = presence-sfp/tx-dis-sfp.",
+    "SFP_CTRL": {
+        "dev_info": {
+            "device_type": "SFP",
+            "device_name": "SFP_CTRL",
+            "device_parent": "SYSTEM"
+        },
+        "i2c": {
+            "dev_attr": {
+                "display_name": "CFPGA Garnet Port Controller",
+                "num_ports": "66",
+                "num_qsfp_dd_ports": "64",
+                "num_sfp_ports": "2",
+                "port_type": "qsfp_dd",
+                "default_driver": "optoe3",
+                "sfp_driver": "optoe2",
+                "qsfp_dd_port_range": "0-63",
+                "sfp_port_range": "64-65",
+                "i2c_mst_pci_path": "/sys/bus/pci/devices/0000:02:00.0",
+                "ports_per_cfpga_channel": "1",
+                "eeprom_addr": "0x50",
+                "reset_settle_time_secs": "2.0",
+                "optoe_probe_settle_secs": "3.0",
+                "cmis_host_interface_preference": "S C2M"
+            }
+        },
+        "gpio_attr": {
+            "gpio_presence_label_cpld0": "presence-cpld0",
+            "gpio_presence_label_cpld1": "presence-cpld1",
+            "gpio_presence_label_sfp": "presence-sfp",
+            "gpio_lpmode_label_cpld0": "lpmod-cpld0",
+            "gpio_lpmode_label_cpld1": "lpmod-cpld1",
+            "gpio_reset_label_cpld0": "reset-cpld0",
+            "gpio_reset_label_cpld1": "reset-cpld1",
+            "gpio_txdisable_label_sfp": "tx-dis-sfp",
+            "gpio_txfault_label_sfp": "tx-fault-sfp",
+            "gpio_rxlos_label_sfp": "rx-los-sfp",
+            "gpio_label_groups": [
+                {
+                    "port_range": "0-31",
+                    "suffix": "cpld0"
+                },
+                {
+                    "port_range": "32-63",
+                    "suffix": "cpld1"
+                },
+                {
+                    "port_range": "64-65",
+                    "suffix": "sfp"
+                }
+            ],
+            "present_active_value": "0",
+            "lpmode_active_value": "1",
+            "reset_active_value": "0"
+        }
+    },
+    "_comment_thermal": "Thermal management policy: poll interval and fan speed range.",
+    "THERMAL_CTRL": {
+        "dev_info": {
+            "device_type": "THERMAL_CTRL",
+            "device_name": "THERMAL_CTRL"
+        },
+        "dev_attr": {
+            "thermald_interval": "15",
+            "min_fan_speed": "40",
+            "max_fan_speed": "100"
+        }
+    },
+    "_comment_components": "Firmware components from platform_components.json.",
+    "COMPONENT1": {
+        "comp_attr": {
+            "name": "BIOS",
+            "type": "BIOS",
+            "description": "System BIOS ROM",
+            "boot_type": "cold",
+            "post_flash_reboot": "cold"
+        },
+        "attr_list": [
+            {
+                "attr_name": "version",
+                "get_cmd": "cat /sys/class/dmi/id/bios_version | grep -oE '[0-9]+\\.[0-9]+$'"
+            }
+        ]
+    },
+    "COMPONENT2": {
+        "comp_attr": {
+            "name": "PORT-CPLD",
+            "type": "CPLD",
+            "description": "Optics CPLD (garnet CPLD1+CPLD2)",
+            "boot_type": "cold",
+            "post_flash_reboot": "cold"
+        },
+        "attr_list": [
+            {
+                "attr_name": "version",
+                "get_cmd": "cat /sys/bus/pci/devices/0000:02:00.0/optic_cpld_major 2>/dev/null && cat /sys/bus/pci/devices/0000:02:00.0/optic_cpld1_major 2>/dev/null || echo unknown"
+            }
+        ]
+    },
+    "COMPONENT3": {
+        "comp_attr": {
+            "name": "FPGA",
+            "type": "FPGA",
+            "description": "Main FPGA (garnet PCIe 0000:02:00.0)",
+            "boot_type": "cold",
+            "post_flash_reboot": "cold"
+        },
+        "attr_list": [
+            {
+                "attr_name": "version",
+                "get_cmd": "cat /sys/bus/pci/devices/0000:02:00.0/major 2>/dev/null || echo unknown"
+            }
+        ]
+    },
+    "COMPONENT4": {
+        "comp_attr": {
+            "name": "FAN-CPLD",
+            "type": "CPLD",
+            "description": "Fan CPLD garnet-fancpld @0x33",
+            "boot_type": "cold",
+            "post_flash_reboot": "cold"
+        },
+        "attr_list": [
+            {
+                "attr_name": "version",
+                "get_cmd": "/usr/sbin/fancpld_version_sonic.py 2>/dev/null || echo unknown"
+            }
+        ]
+    },
+    "COMPONENT5": {
+        "comp_attr": {
+            "name": "BCM-ASIC",
+            "type": "ASIC",
+            "description": "Broadcom switching ASIC PCIe firmware",
+            "boot_type": "cold",
+            "post_flash_reboot": "cold"
+        },
+        "attr_list": [
+            {
+                "attr_name": "version",
+                "get_cmd": "/usr/sbin/bcm_asic_version_sonic.py 2>/dev/null || echo unknown"
+            }
+        ]
+    },
+    "COMPONENT6": {
+        "comp_attr": {
+            "name": "REFPGA",
+            "type": "FPGA",
+            "description": "RE FPGA (jnx-xrefpga-lpcm, LPC 0xFC800000)",
+            "boot_type": "cold",
+            "post_flash_reboot": "cold"
+        },
+        "attr_list": [
+            {
+                "attr_name": "version",
+                "get_cmd": "/usr/sbin/refpga_version_sonic.py 2>/dev/null || echo unknown"
+            }
+        ]
+    },
+    "COMPONENT7": {
+        "comp_attr": {
+            "name": "PSM-1-AC",
+            "type": "PSM",
+            "description": "Power Supply Module 1 AC MCU firmware",
+            "boot_type": "none",
+            "post_flash_reboot": "none"
+        },
+        "attr_list": [
+            {
+                "attr_name": "version",
+                "get_cmd": "/usr/sbin/psm_firmware_version_sonic.py psm0 2>/dev/null || echo unknown"
+            }
+        ]
+    },
+    "COMPONENT8": {
+        "comp_attr": {
+            "name": "PSM-1-DC",
+            "type": "PSM",
+            "description": "Power Supply Module 1 DC MCU firmware",
+            "boot_type": "none",
+            "post_flash_reboot": "none"
+        },
+        "attr_list": [
+            {
+                "attr_name": "version",
+                "get_cmd": "/usr/sbin/psm_firmware_version_sonic.py psm0-dc 2>/dev/null || echo unknown"
+            }
+        ]
+    },
+    "COMPONENT9": {
+        "comp_attr": {
+            "name": "PSM-2-AC",
+            "type": "PSM",
+            "description": "Power Supply Module 2 AC MCU firmware",
+            "boot_type": "none",
+            "post_flash_reboot": "none"
+        },
+        "attr_list": [
+            {
+                "attr_name": "version",
+                "get_cmd": "/usr/sbin/psm_firmware_version_sonic.py psm1 2>/dev/null || echo unknown"
+            }
+        ]
+    },
+    "COMPONENT10": {
+        "comp_attr": {
+            "name": "PSM-2-DC",
+            "type": "PSM",
+            "description": "Power Supply Module 2 DC MCU firmware",
+            "boot_type": "none",
+            "post_flash_reboot": "none"
+        },
+        "attr_list": [
+            {
+                "attr_name": "version",
+                "get_cmd": "/usr/sbin/psm_firmware_version_sonic.py psm1-dc 2>/dev/null || echo unknown"
+            }
+        ]
+    },
+    "COMPONENT11": {
+        "comp_attr": {
+            "name": "I210-NIC",
+            "type": "NIC",
+            "description": "Intel I210 NIC firmware",
+            "boot_type": "cold",
+            "post_flash_reboot": "cold"
+        },
+        "attr_list": [
+            {
+                "attr_name": "version",
+                "get_cmd": "/usr/sbin/upgrade_I210_firmware_sonic -v 2>/dev/null || echo unknown"
+            },
+            {
+                "attr_name": "update",
+                "get_cmd": "/usr/sbin/upgrade_I210_firmware_sonic -u"
+            }
+        ]
+    },
+    "COMPONENT12": {
+        "comp_attr": {
+            "name": "SSD-0",
+            "type": "SSD",
+            "description": "Primary SSD firmware",
+            "boot_type": "cold",
+            "post_flash_reboot": "cold"
+        },
+        "attr_list": [
+            {
+                "attr_name": "version",
+                "get_cmd": "/usr/sbin/get_ssd_firmware_version ata5 2>/dev/null || echo unknown"
+            }
+        ]
+    },
+    "COMPONENT13": {
+        "comp_attr": {
+            "name": "SSD-1",
+            "type": "SSD",
+            "description": "Secondary SSD firmware",
+            "boot_type": "cold",
+            "post_flash_reboot": "cold"
+        },
+        "attr_list": [
+            {
+                "attr_name": "version",
+                "get_cmd": "/usr/sbin/get_ssd_firmware_version ata9 2>/dev/null || echo unknown"
+            }
+        ]
+    },
+    "_comment_voltage_sensors": "Voltage sensors (6): V_OUT (in2_input) from each xdpe12284/xdpe132g5 VRM on MUX1 Ch5 (bus 0x15). virt_parent references VRM device for hwmon path resolution.",
+    "VOLTAGE1": {
+        "dev_info": {
+            "device_type": "VOLTAGE_SENSOR",
+            "device_name": "VOLTAGE1",
+            "device_parent": "MUX1",
+            "virt_parent": "VRM1"
+        },
+        "dev_attr": {
+            "display_name": "OPTICS_GRP3 3.3V",
+            "high_threshold": "3564",
+            "low_threshold": "3036"
+        },
+        "i2c": {
+            "attr_list": [
+                {
+                    "attr_name": "volt1_input",
+                    "drv_attr_name": "in2_input"
+                }
+            ]
+        }
+    },
+    "VOLTAGE2": {
+        "dev_info": {
+            "device_type": "VOLTAGE_SENSOR",
+            "device_name": "VOLTAGE2",
+            "device_parent": "MUX1",
+            "virt_parent": "VRM2"
+        },
+        "dev_attr": {
+            "display_name": "OPTICS_GRP2 3.3V",
+            "high_threshold": "3564",
+            "low_threshold": "3036"
+        },
+        "i2c": {
+            "attr_list": [
+                {
+                    "attr_name": "volt1_input",
+                    "drv_attr_name": "in2_input"
+                }
+            ]
+        }
+    },
+    "VOLTAGE3": {
+        "dev_info": {
+            "device_type": "VOLTAGE_SENSOR",
+            "device_name": "VOLTAGE3",
+            "device_parent": "MUX1",
+            "virt_parent": "VRM3"
+        },
+        "dev_attr": {
+            "display_name": "OPTICS_GRP1 3.3V",
+            "high_threshold": "3564",
+            "low_threshold": "3036"
+        },
+        "i2c": {
+            "attr_list": [
+                {
+                    "attr_name": "volt1_input",
+                    "drv_attr_name": "in2_input"
+                }
+            ]
+        }
+    },
+    "VOLTAGE4": {
+        "dev_info": {
+            "device_type": "VOLTAGE_SENSOR",
+            "device_name": "VOLTAGE4",
+            "device_parent": "MUX1",
+            "virt_parent": "VRM4"
+        },
+        "dev_attr": {
+            "display_name": "TRVDD1 0.9V/0.75V"
+        },
+        "i2c": {
+            "attr_list": [
+                {
+                    "attr_name": "volt1_input",
+                    "drv_attr_name": "in2_input"
+                }
+            ]
+        }
+    },
+    "VOLTAGE5": {
+        "dev_info": {
+            "device_type": "VOLTAGE_SENSOR",
+            "device_name": "VOLTAGE5",
+            "device_parent": "MUX1",
+            "virt_parent": "VRM5"
+        },
+        "dev_attr": {
+            "display_name": "TRVDD0 0.9V/0.75V"
+        },
+        "i2c": {
+            "attr_list": [
+                {
+                    "attr_name": "volt1_input",
+                    "drv_attr_name": "in2_input"
+                }
+            ]
+        }
+    },
+    "VOLTAGE6": {
+        "dev_info": {
+            "device_type": "VOLTAGE_SENSOR",
+            "device_name": "VOLTAGE6",
+            "device_parent": "MUX1",
+            "virt_parent": "VRM6"
+        },
+        "dev_attr": {
+            "display_name": "CPU VRM"
+        },
+        "i2c": {
+            "attr_list": [
+                {
+                    "attr_name": "volt1_input",
+                    "drv_attr_name": "in2_input"
+                }
+            ]
+        }
+    },
+    "_comment_current_sensors": "Current sensors (6): I_OUT (curr1_input) from each xdpe12284/xdpe132g5 VRM on MUX1 Ch5 (bus 0x15).",
+    "CURRENT1": {
+        "dev_info": {
+            "device_type": "CURRENT_SENSOR",
+            "device_name": "CURRENT1",
+            "device_parent": "MUX1",
+            "virt_parent": "VRM1"
+        },
+        "dev_attr": {
+            "display_name": "OPTICS_GRP3 3.3V"
+        },
+        "i2c": {
+            "attr_list": [
+                {
+                    "attr_name": "current1_input",
+                    "drv_attr_name": "curr1_input"
+                }
+            ]
+        }
+    },
+    "CURRENT2": {
+        "dev_info": {
+            "device_type": "CURRENT_SENSOR",
+            "device_name": "CURRENT2",
+            "device_parent": "MUX1",
+            "virt_parent": "VRM2"
+        },
+        "dev_attr": {
+            "display_name": "OPTICS_GRP2 3.3V"
+        },
+        "i2c": {
+            "attr_list": [
+                {
+                    "attr_name": "current1_input",
+                    "drv_attr_name": "curr1_input"
+                }
+            ]
+        }
+    },
+    "CURRENT3": {
+        "dev_info": {
+            "device_type": "CURRENT_SENSOR",
+            "device_name": "CURRENT3",
+            "device_parent": "MUX1",
+            "virt_parent": "VRM3"
+        },
+        "dev_attr": {
+            "display_name": "OPTICS_GRP1 3.3V"
+        },
+        "i2c": {
+            "attr_list": [
+                {
+                    "attr_name": "current1_input",
+                    "drv_attr_name": "curr1_input"
+                }
+            ]
+        }
+    },
+    "CURRENT4": {
+        "dev_info": {
+            "device_type": "CURRENT_SENSOR",
+            "device_name": "CURRENT4",
+            "device_parent": "MUX1",
+            "virt_parent": "VRM4"
+        },
+        "dev_attr": {
+            "display_name": "TRVDD1 0.9V/0.75V"
+        },
+        "i2c": {
+            "attr_list": [
+                {
+                    "attr_name": "current1_input",
+                    "drv_attr_name": "curr1_input"
+                }
+            ]
+        }
+    },
+    "CURRENT5": {
+        "dev_info": {
+            "device_type": "CURRENT_SENSOR",
+            "device_name": "CURRENT5",
+            "device_parent": "MUX1",
+            "virt_parent": "VRM5"
+        },
+        "dev_attr": {
+            "display_name": "TRVDD0 0.9V/0.75V"
+        },
+        "i2c": {
+            "attr_list": [
+                {
+                    "attr_name": "current1_input",
+                    "drv_attr_name": "curr1_input"
+                }
+            ]
+        }
+    },
+    "CURRENT6": {
+        "dev_info": {
+            "device_type": "CURRENT_SENSOR",
+            "device_name": "CURRENT6",
+            "device_parent": "MUX1",
+            "virt_parent": "VRM6"
+        },
+        "dev_attr": {
+            "display_name": "CPU VRM"
+        },
+        "i2c": {
+            "attr_list": [
+                {
+                    "attr_name": "current1_input",
+                    "drv_attr_name": "curr1_input"
+                }
+            ]
+        }
+    },
+    "_comment_valuemap": "Value maps: GPIO-to-boolean translation for presence and power-good signals.",
+    "value_map": {
+        "psu_present": {
+            "0": "true",
+            "1": "false"
+        },
+        "psu_power_good": {
+            "0": "false",
+            "1": "true"
+        },
+        "fan_present": {
+            "1": "true",
+            "0": "false"
+        }
+    },
+    "_comment_port": "Optics ports: PORT1-32 QSFP-DD via CPLD1 (ocores i2c-garnet id=0..31, buses 0x40-0x5f), PORT33-64 via CPLD2 (id=32..63, buses 0x60-0x7f), PORT65-66 SFP28 via CPLD2 (id=64..65, buses 0x80-0x81). Verify bus numbers with 'i2cdetect -l' on first boot.",
+    "PORT0": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT0",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "0"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x40",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x0"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "0"
+        }
+    },
+    "PORT1": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT1",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "1"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x41",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "1"
+        }
+    },
+    "PORT2": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT2",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "2"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x50",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x2"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "16"
+        }
+    },
+    "PORT3": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT3",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "3"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x51",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x3"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "17"
+        }
+    },
+    "PORT4": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT4",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "4"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x42",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x4"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "2"
+        }
+    },
+    "PORT5": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT5",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "5"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x43",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x5"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "3"
+        }
+    },
+    "PORT6": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT6",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "6"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x52",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x6"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "18"
+        }
+    },
+    "PORT7": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT7",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "7"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x53",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x7"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "19"
+        }
+    },
+    "PORT8": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT8",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "8"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x44",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x8"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "4"
+        }
+    },
+    "PORT9": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT9",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "9"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x45",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x9"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "5"
+        }
+    },
+    "PORT10": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT10",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "10"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x54",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0xa"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "20"
+        }
+    },
+    "PORT11": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT11",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "11"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x55",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0xb"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "21"
+        }
+    },
+    "PORT12": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT12",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "12"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x46",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0xc"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "6"
+        }
+    },
+    "PORT13": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT13",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "13"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x47",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0xd"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "7"
+        }
+    },
+    "PORT14": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT14",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "14"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x56",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0xe"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "22"
+        }
+    },
+    "PORT15": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT15",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "15"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x57",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0xf"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "23"
+        }
+    },
+    "PORT16": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT16",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "16"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x48",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x10"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "8"
+        }
+    },
+    "PORT17": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT17",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "17"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x49",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x11"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "9"
+        }
+    },
+    "PORT18": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT18",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "18"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x58",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x12"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "24"
+        }
+    },
+    "PORT19": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT19",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "19"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x59",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x13"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "25"
+        }
+    },
+    "PORT20": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT20",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "20"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x4a",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x14"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "10"
+        }
+    },
+    "PORT21": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT21",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "21"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x4b",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x15"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "11"
+        }
+    },
+    "PORT22": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT22",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "22"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x5a",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x16"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "26"
+        }
+    },
+    "PORT23": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT23",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "23"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x5b",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x17"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "27"
+        }
+    },
+    "PORT24": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT24",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "24"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x4c",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x18"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "12"
+        }
+    },
+    "PORT25": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT25",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "25"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x4d",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x19"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "13"
+        }
+    },
+    "PORT26": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT26",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "26"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x5c",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1a"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "28"
+        }
+    },
+    "PORT27": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT27",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "27"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x5d",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1b"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "29"
+        }
+    },
+    "PORT28": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT28",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "28"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x4e",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1c"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "14"
+        }
+    },
+    "PORT29": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT29",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "29"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x4f",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1d"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "15"
+        }
+    },
+    "PORT30": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT30",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "30"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x5e",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1e"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "30"
+        }
+    },
+    "PORT31": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT31",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "31"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x5f",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1f"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "31"
+        }
+    },
+    "PORT32": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT32",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "32"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x60",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x0"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "0"
+        }
+    },
+    "PORT33": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT33",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "33"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x61",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "1"
+        }
+    },
+    "PORT34": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT34",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "34"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x70",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x2"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "16"
+        }
+    },
+    "PORT35": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT35",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "35"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x71",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x3"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "17"
+        }
+    },
+    "PORT36": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT36",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "36"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x62",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x4"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "2"
+        }
+    },
+    "PORT37": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT37",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "37"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x63",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x5"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "3"
+        }
+    },
+    "PORT38": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT38",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "38"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x72",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x6"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "18"
+        }
+    },
+    "PORT39": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT39",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "39"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x73",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x7"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "19"
+        }
+    },
+    "PORT40": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT40",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "40"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x64",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x8"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "4"
+        }
+    },
+    "PORT41": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT41",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "41"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x65",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x9"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "5"
+        }
+    },
+    "PORT42": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT42",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "42"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x74",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0xa"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "20"
+        }
+    },
+    "PORT43": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT43",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "43"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x75",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0xb"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "21"
+        }
+    },
+    "PORT44": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT44",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "44"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x66",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0xc"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "6"
+        }
+    },
+    "PORT45": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT45",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "45"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x67",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0xd"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "7"
+        }
+    },
+    "PORT46": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT46",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "46"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x76",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0xe"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "22"
+        }
+    },
+    "PORT47": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT47",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "47"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x77",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0xf"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "23"
+        }
+    },
+    "PORT48": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT48",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "48"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x68",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x10"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "8"
+        }
+    },
+    "PORT49": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT49",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "49"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x69",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x11"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "9"
+        }
+    },
+    "PORT50": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT50",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "50"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x78",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x12"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "24"
+        }
+    },
+    "PORT51": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT51",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "51"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x79",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x13"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "25"
+        }
+    },
+    "PORT52": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT52",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "52"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x6a",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x14"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "10"
+        }
+    },
+    "PORT53": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT53",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "53"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x6b",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x15"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "11"
+        }
+    },
+    "PORT54": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT54",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "54"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x7a",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x16"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "26"
+        }
+    },
+    "PORT55": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT55",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "55"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x7b",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x17"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "27"
+        }
+    },
+    "PORT56": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT56",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "56"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x6c",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x18"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "12"
+        }
+    },
+    "PORT57": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT57",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "57"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x6d",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x19"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "13"
+        }
+    },
+    "PORT58": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT58",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "58"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x7c",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1a"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "28"
+        }
+    },
+    "PORT59": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT59",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "59"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x7d",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1b"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "29"
+        }
+    },
+    "PORT60": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT60",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "60"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x6e",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1c"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "14"
+        }
+    },
+    "PORT61": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT61",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "61"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x6f",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1d"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "15"
+        }
+    },
+    "PORT62": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT62",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "62"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x7e",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1e"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "30"
+        }
+    },
+    "PORT63": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT63",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "63"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x7f",
+                "dev_addr": "0x50",
+                "dev_type": "optoe3"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1f"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "31"
+        }
+    },
+    "PORT64": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT64",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "64"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x80",
+                "dev_addr": "0x50",
+                "dev_type": "optoe2"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x0"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "0"
+        }
+    },
+    "PORT65": {
+        "dev_info": {
+            "device_type": "PORT_MODULE",
+            "device_name": "PORT65",
+            "device_parent": "SYSTEM"
+        },
+        "dev_attr": {
+            "dev_idx": "65"
+        },
+        "i2c": {
+            "topo_info": {
+                "parent_bus": "0x81",
+                "dev_addr": "0x50",
+                "dev_type": "optoe2"
+            },
+            "attr_list": [
+                {
+                    "attr_name": "xcvr_present",
+                    "attr_devtype": "gpio",
+                    "attr_offset": "0x1"
+                }
+            ]
+        },
+        "gpio_attr": {
+            "gpio_offset": "1"
+        }
+    }
+}

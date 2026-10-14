@@ -1,0 +1,450 @@
+{%- set PORT_ALL = [] %}
+{%- set PORTCHANNEL_ALL = [] %}
+
+{%- for port in PORT %}
+    {%- if PORT_ALL.append(port) %}{% endif %}
+{%- endfor %}
+{%- if PORT_ALL | sort_by_port_index %}{% endif %}
+
+{%- set port_names_list_all = [] %}
+{%- for port in PORT_ALL %}
+    {%- if port_names_list_all.append(port) %}{% endif %}
+{%- endfor %}
+{%- set port_names_all = port_names_list_all | join(',') -%}
+
+{%- set PORT_ACTIVE = [] %}
+{%- if DEVICE_NEIGHBOR is not defined %}
+    {%- set PORT_ACTIVE = PORT_ALL %}
+{%- else %}
+    {%- for port in DEVICE_NEIGHBOR.keys() %}
+        {%- if PORT_ACTIVE.append(port) %}{%- endif %}
+    {%- endfor %}
+{%- endif %}
+{%- if PORT_ACTIVE | sort_by_port_index %}{%-endif -%}
+
+{%- set port_names_list_active = [] %}
+{%- for port in PORT_ACTIVE %}
+    {%- if port_names_list_active.append(port) %}{%- endif %}
+{%- endfor %}
+{%- set port_names_active = port_names_list_active | join(',') -%}
+
+{%- for portChannel in PORTCHANNEL %}
+    {%- if PORTCHANNEL_ALL.append(portChannel) %}{% endif %}
+{%- endfor %}
+
+{%- set pfc_to_pg_map_supported_asics = ['mellanox', 'barefoot', 'marvell'] -%}
+{%- set backend_device_types = ['BackEndToRRouter', 'BackEndLeafRouter'] -%}
+
+{%- if SWITCH is defined and 'roce_pfc_priority' in SWITCH['switch'] and SWITCH['switch']['roce_pfc_priority'] != '' -%}
+    {%- set PFC_PRIO = SWITCH['switch']['roce_pfc_priority'] %}
+    {%- set pfc_prio_list = PFC_PRIO.split(',') %}
+{%- endif -%}
+{%- if SWITCH is defined and 'roce_enable' in SWITCH['switch'] and SWITCH['switch']['roce_enable'] == "true" -%}
+{%- if 'roce_pfc_priority' in SWITCH['switch'] and SWITCH['switch']['roce_pfc_priority'] != "" -%}
+    {%- set ROCE_PFC_RECONFIG = "false" %}
+{%- endif -%}
+{%- endif -%}
+{# Single swapping is needed, when PFC PRIO is 3 or 4 #}
+{%- if ("3" not in pfc_prio_list and "4" not in pfc_prio_list) or ("3" in pfc_prio_list and "4" in pfc_prio_list) %}
+   {%- set single_swapping = False %}
+{%- else %}
+   {%- set single_swapping = True %}
+{%- endif -%}
+{%- if PFC_PRIO is defined and PFC_PRIO != '' %}
+   {%- set missing_prio_per_cnp = "4" if ("6" in pfc_prio_list) and ("4" not in pfc_prio_list) else "3" if ("6" in pfc_prio_list) and ("3" not in pfc_prio_list) else None %}
+   {%- set missing_prio_per_default_tc = "3" if ("0" in pfc_prio_list) and ("3" not in pfc_prio_list) else "4" if ("0" in pfc_prio_list) and ("4" not in pfc_prio_list) else None %}
+{%- endif -%}
+{
+{% if generate_tc_to_pg_map is defined %}
+    {{- generate_tc_to_pg_map() }}
+{% else %}
+    "TC_TO_PRIORITY_GROUP_MAP": {
+        "ROCE": {
+{% if PFC_PRIO is defined and PFC_PRIO != '' %}
+    {% for TC in range(8) %}
+       {%- if pfc_prio_list[0]|string() == TC|string() %}
+            "{{TC}}":"3"
+       {%- elif pfc_prio_list[1]|string() == TC|string() %}
+            "{{TC}}":"4"
+       {%- else %}
+            "{{TC}}":"7"
+       {%- endif -%}
+       {%- if not loop.last -%},{% endif %}
+
+    {% endfor %}
+{% else %}
+            "0": "7",
+            "1": "7",
+            "2": "7",
+            "3": "3",
+            "4": "4",
+            "5": "7",
+            "6": "7",
+            "7": "7"
+{% endif %}
+        }
+    },
+{% endif %}
+    "MAP_PFC_PRIORITY_TO_QUEUE": {
+        "ROCE": {
+{% if PFC_PRIO is defined and PFC_PRIO != '' %}
+    {% for pfc in range(8) %}
+        {%- if pfc_prio_list[0]|string() == pfc|string() %}
+            "{{pfc}}":"3"
+        {%- elif pfc_prio_list[1]|string() == pfc|string() %}
+            "{{pfc}}":"4"
+        {%- elif single_swapping %}
+         {%- if pfc|string() == "3" %}
+          {%- set index = pfc_prio_list.index("4") %}
+            "3":"{{pfc_prio_list[not index]}}"
+         {%- elif pfc|string() == "4" %}
+          {%- set index = pfc_prio_list.index("3") %}
+            "4":"{{pfc_prio_list[not index]}}"
+         {%- else %}
+            "{{pfc}}":"{{pfc}}"
+         {%- endif -%}
+        {%- else %}
+         {%- if "3" == pfc|string() %}
+            "3":"{{pfc_prio_list[0]}}"
+         {%- elif "4" == pfc|string() %}
+            "4":"{{pfc_prio_list[1]}}"
+         {%- else %}
+            "{{pfc}}":"{{pfc}}"
+         {%- endif -%}
+        {%- endif -%}
+       {%- if not loop.last -%},{% endif %}
+
+   {% endfor %}
+{% else %}
+            "0": "0",
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7"
+{% endif %}
+        }
+    },
+    "TC_TO_QUEUE_MAP": {
+        "ROCE": {
+{% if PFC_PRIO is defined and PFC_PRIO != '' %}
+    {% for TC in range(8) %}
+        {%- if pfc_prio_list[0]|string() == TC|string() %}
+            "{{TC}}":"3"
+        {%- elif pfc_prio_list[1]|string() == TC|string() %}
+            "{{TC}}":"4"
+        {%- elif missing_prio_per_cnp and missing_prio_per_cnp == TC|string() %}
+            "{{missing_prio_per_cnp}}":"{{6}}"
+        {%- elif TC|string() == "6" %}
+            "{{TC}}":"6"
+        {%- else %}
+            "{{TC}}":"0"
+        {%- endif -%}
+        {%- if not loop.last -%},{% endif %}
+
+    {% endfor %}
+{% else %}
+            "0": "0",
+            "1": "0",
+            "2": "0",
+            "3": "3",
+            "4": "4",
+            "5": "0",
+            "6": "6",
+            "7": "0"
+{% endif %}
+        }
+    },
+{% if 'type' in DEVICE_METADATA['localhost'] and DEVICE_METADATA['localhost']['type'] in backend_device_types and 'storage_device' in DEVICE_METADATA['localhost'] and DEVICE_METADATA['localhost']['storage_device'] == 'true' %}
+    "DOT1P_TO_TC_MAP": {
+        "ROCE": {
+            "0": "0",
+            "1": "0",
+            "2": "0",
+            "3": "3",
+            "4": "4",
+            "5": "0",
+            "6": "6",
+            "7": "0"
+        }
+    },
+{% else %}
+    "DSCP_TO_TC_MAP": {
+        "ROCE": {
+{% if PFC_PRIO is defined and PFC_PRIO != '' %}
+    {% for dscp in range(64) %}
+        {%- if "4" == dscp|string() %}
+            "{{dscp}}":"{{pfc_prio_list[1]}}"
+        {%- elif "24" == dscp|string() %}
+            "{{dscp}}":"{{pfc_prio_list[0]}}"
+        {%- elif "26" == dscp|string() %}
+            "{{dscp}}":"{{pfc_prio_list[0]}}"
+        {%- elif missing_prio_per_cnp and dscp|string() == "48" %}
+            "{{dscp}}":"{{missing_prio_per_cnp}}"
+        {%- elif "48" == dscp|string() %}
+            "{{dscp}}":"6"
+        {%- elif missing_prio_per_default_tc %}
+            "{{dscp}}":"{{missing_prio_per_default_tc}}"
+        {%- else %}
+            "{{dscp}}":"0"
+        {%- endif -%}
+	{%- if not loop.last -%},{% endif %}
+
+    {% endfor %}
+        }
+    },
+    "DOT1P_TO_TC_MAP": {
+        "ROCE": {
+    {% for dot1p in range(8) %}
+         {%- if pfc_prio_list[0]|string() == dot1p|string() %}
+            "{{dot1p}}":"{{pfc_prio_list[0]}}"
+         {%- elif pfc_prio_list[1]|string() == dot1p|string() %}
+            "{{dot1p}}":"{{pfc_prio_list[1]}}"
+         {%- elif dot1p|string() == "6" %}
+            "6":"6"
+         {%- elif missing_prio_per_cnp and dot1p|string() == missing_prio_per_cnp %}
+            "{{dot1p}}":"{{missing_prio_per_cnp}}"
+         {%- elif missing_prio_per_default_tc %}
+            "{{dot1p}}":"{{missing_prio_per_default_tc}}"
+         {%- else %}
+            "{{dot1p}}":"0"
+         {%- endif -%}
+        {%- if not loop.last -%},{% endif %}
+
+    {% endfor %}
+        }
+    },
+    {% else %}
+            "0" : "0",
+            "1" : "0",
+            "2" : "0",
+            "3" : "0",
+            "4" : "4",
+            "5" : "0",
+            "6" : "0",
+            "7" : "0",
+            "8" : "0",
+            "9" : "0",
+            "10": "0",
+            "11": "0",
+            "12": "0",
+            "13": "0",
+            "14": "0",
+            "15": "0",
+            "16": "0",
+            "17": "0",
+            "18": "0",
+            "19": "0",
+            "20": "0",
+            "21": "0",
+            "22": "0",
+            "23": "0",
+            "24": "3",
+            "25": "0",
+            "26": "3",
+            "27": "0",
+            "28": "0",
+            "29": "0",
+            "30": "0",
+            "31": "0",
+            "32": "0",
+            "33": "0",
+            "34": "0",
+            "35": "0",
+            "36": "0",
+            "37": "0",
+            "38": "0",
+            "39": "0",
+            "40": "0",
+            "41": "0",
+            "42": "0",
+            "43": "0",
+            "44": "0",
+            "45": "0",
+            "46": "0",
+            "47": "0",
+            "48": "6",
+            "49": "0",
+            "50": "0",
+            "51": "0",
+            "52": "0",
+            "53": "0",
+            "54": "0",
+            "55": "0",
+            "56": "0",
+            "57": "0",
+            "58": "0",
+            "59": "0",
+            "60": "0",
+            "61": "0",
+            "62": "0",
+            "63": "0"
+        }
+    },
+    "DOT1P_TO_TC_MAP": {
+        "ROCE": {
+            "0": "0",
+            "1": "0",
+            "2": "0",
+            "3": "3",
+            "4": "4",
+            "5": "0",
+            "6": "6",
+            "7": "0"
+        }
+    },
+{% endif %}
+{% endif %}
+{% if ROCE_PFC_RECONFIG is not defined %}
+    "SCHEDULER": {
+        "ROCE@0": {
+            "type"  : "DWRR",
+            "weight": "50"
+        },
+        "ROCE@3": {
+            "type"  : "DWRR",
+            "weight": "50"
+        },
+        "ROCE@4": {
+            "type"  : "DWRR",
+            "weight": "50"
+        },
+        "ROCE@6": {
+            "type"  : "STRICT"
+        }
+    },
+{% endif %}
+{% if generate_pfc_prio_to_pg_map is defined %}
+    "PFC_PRIORITY_TO_PRIORITY_GROUP_MAP": {
+        "ROCE": {
+    {% if PFC_PRIO is defined and PFC_PRIO != '' %}
+    {% for pfc in range(8) %}
+        {%- if pfc_prio_list[0]|string() == pfc|string() %}
+            "{{pfc}}":"3"
+        {%- elif pfc_prio_list[1]|string() == pfc|string() %}
+            "{{pfc}}":"4"
+        {%- elif single_swapping %}
+          {%- if pfc|string() == "3" %}
+           {%- set index = pfc_prio_list.index("4") %}
+            "3":"{{pfc_prio_list[not index]}}"
+          {%- elif pfc|string() == "4" %}
+           {%- set index = pfc_prio_list.index("3") %}
+            "4":"{{pfc_prio_list[not index]}}"
+          {%- else %}
+            "{{pfc}}":"{{pfc}}"
+          {%- endif -%}
+        {%- else %}
+          {%- if "3" == pfc|string() %}
+            "3":"{{pfc_prio_list[0]}}"
+          {%- elif "4" == pfc|string() %}
+            "4":"{{pfc_prio_list[1]}}"
+          {%- else %}
+            "{{pfc}}":"{{pfc}}"
+          {%- endif -%}
+        {%- endif -%}
+     {%- if not loop.last -%},{% endif %}
+
+    {% endfor %}
+    {% else %}
+            "0": "0",
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7"
+    {%- endif -%}
+        }
+    },
+{% endif %}
+{% if asic_type in pfc_to_pg_map_supported_asics  %}
+    "PFC_PRIORITY_TO_PRIORITY_GROUP_MAP": {
+        "ROCE": {
+            "3": "3",
+            "4": "4"
+        }
+    },
+{% endif %}
+    "PORT_QOS_MAP": {
+{% for port in PORT_ACTIVE %}
+        "{{ port }}": {
+{% set ns = namespace(is_port_channel_member=False) %}
+{% if PORTCHANNEL_MEMBER|length %}
+{%- for port_channel_member in PORTCHANNEL_MEMBER.keys() %}
+{% if port == port_channel_member[1] %}
+{% set ns.is_port_channel_member=True %}
+{% endif %}
+{%- endfor %}
+{% endif %}
+{#% if ns.is_port_channel_member == False %#}
+{% if 'type' in DEVICE_METADATA['localhost'] and DEVICE_METADATA['localhost']['type'] in backend_device_types and 'storage_device' in DEVICE_METADATA['localhost'] and DEVICE_METADATA['localhost']['storage_device'] == 'true' %}
+            "dot1p_to_tc_map" : "ROCE",
+{% else %}
+            "dscp_to_tc_map"  : "ROCE",
+            "dot1p_to_tc_map" : "ROCE",
+{% endif %}
+{#% endif %#}
+            "tc_to_queue_map" : "ROCE",
+            "tc_to_pg_map"    : "ROCE",
+            "pfc_to_queue_map": "ROCE",
+{% if generate_pfc_prio_to_pg_map is defined %}
+            "pfc_to_pg_map"   : "ROCE",
+{% endif %}
+{% if asic_type in pfc_to_pg_map_supported_asics %}
+            "pfc_to_pg_map"   : "ROCE",
+{% endif %}
+{% if PFC_PRIO is defined and PFC_PRIO != '' %}
+            "pfc_enable"      : "{{PFC_PRIO}}"
+{% else %}
+            "pfc_enable"      : "3,4"
+{% endif %}
+        }{% if not loop.last %},{% endif %}
+
+{% endfor %}
+{% if ROCE_PFC_RECONFIG is not defined %}
+    },
+
+
+{% if generate_wred_profiles is defined %}
+    {{- generate_wred_profiles() }}
+{% else %}
+    "WRED_PROFILE": {
+        "ROCE": {
+            "wred_green_enable"      : "true",
+            "ecn"                    : "ecn_green",
+            "green_max_threshold"    : "2097152",
+            "green_min_threshold"    : "1048576",
+            "green_drop_probability" : "5"
+        }
+    },
+{% endif %}
+    "QUEUE": {
+{% for port in PORT_ACTIVE %}
+        "{{ port }}|3": {
+            "scheduler"   : "ROCE@3",
+            "wred_profile": "ROCE"
+        },
+{% endfor %}
+{% for port in PORT_ACTIVE %}
+        "{{ port }}|4": {
+            "scheduler"   : "ROCE@4",
+            "wred_profile": "ROCE"
+        },
+{% endfor %}
+{% for port in PORT_ACTIVE %}
+        "{{ port }}|0": {
+            "scheduler": "ROCE@0"
+        },
+{% endfor %}
+{% for port in PORT_ACTIVE %}
+        "{{ port }}|6": {
+            "scheduler": "ROCE@6"
+        }{% if not loop.last %},{% endif %}
+
+{% endfor %}
+{% endif %}
+    }
+}

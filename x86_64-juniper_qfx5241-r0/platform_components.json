@@ -1,0 +1,73 @@
+{
+	"chassis": {
+		"QFX5241": {
+			"component": {
+				"BIOS": {
+					"firmware": "/usr/bin/fw/CICL_U_BUG1_v33.01.efi",
+					"version": "CICL_P_BUG1_00.33.01",
+					"available_version": "CICL_P_BUG1_00.33.01"
+				},
+				"PORT-CPLD": {
+					"firmware": "/usr/bin/fw/garnet_od_optics_cpld_0x0B070x0B08.vme",
+					"version": "0B07.0B08",
+					"available_version": "0B07.0B08"
+				},
+				"FPGA": {
+					"firmware": "/usr/bin/fw/TH5_Garnet2_64P_mainfpga.v5C.F1_primary.bin",
+					"version": "5C.F1",
+					"available_version": "5C.F1"
+				},
+				"FAN-CPLD": {
+					"firmware": "/usr/bin/fw/garnet_od_fan_cpld_0x0B03.vme",
+					"version": "0X0B:0X03",
+					"available_version": "0X0B:0X03"
+				},
+				"BCM-ASIC": {
+					"firmware": "/usr/bin/fw/pciefw_d5_m0_v2p13.bin",
+					"version": "2.13",
+					"available_version": "2.13"
+				},
+				"REFPGA": {
+					"firmware": "/usr/bin/fw/gtre_p_r0008.jed",
+					"version": "0.0.8",
+					"available_version": "0.0.8"
+				},
+				"PSM-1-AC": {
+					"firmware": "/usr/bin/fw/garnet_psm_ac_afo_secondary_00p02p02.bin",
+					"version": "00.02.02",
+					"available_version": "00.02.02"
+				},
+				"PSM-1-DC": {
+					"firmware": "/usr/bin/fw/liteon_DC_PSM_FW_v00.04.05.bin",
+					"version": "00.04.05",
+					"available_version": "00.04.05"
+				},
+				"PSM-2-AC": {
+					"firmware": "/usr/bin/fw/garnet_psm_ac_afo_secondary_00p02p02.bin",
+					"version": "00.02.02",
+					"available_version": "00.02.02"
+				},
+				"PSM-2-DC": {
+					"firmware": "/usr/bin/fw/liteon_DC_PSM_FW_v00.04.05.bin",
+					"version": "00.04.05",
+					"available_version": "00.04.05"
+				},
+				"I210-NIC": {
+					"firmware": "/usr/bin/fw/Garnet_I210_Copper_NCSI_4Mb_A2_3.25_0.03.bin",
+					"version": "3.25",
+					"available_version": "3.25"
+				},
+				"SSD-0": {
+					"firmware": "/usr/bin/fw/EIEM51.A",
+					"version": "EIEM51.A",
+					"available_version": "EIEM51.A"
+				},
+				"SSD-1": {
+					"firmware": "/usr/bin/fw/EIEM51.A",
+					"version": "EIEM51.A",
+					"available_version": "EIEM51.A"
+				}
+			}
+		}
+	}
+}

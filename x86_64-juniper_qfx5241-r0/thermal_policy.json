@@ -1,0 +1,98 @@
+{
+    "thermal_control_algorithm": {
+        "run_at_boot_up": "false",
+        "fan_speed_when_suspend": "70"
+    },
+    "info_types": [
+        {
+            "type": "fan_info"
+        },
+        {
+            "type": "thermal_info"
+        },
+        {
+            "type": "chassis_info"
+        }
+    ],
+    "policies": [
+        {
+            "name": "any fan presence",
+            "conditions": [
+                {
+                    "type": "fan.any.presence"
+                }
+            ],
+            "actions": [
+                {
+                    "type": "thermal.temp_check_and_set_all_fan_speed",
+                    "default_speed": "60",
+                    "hightemp_speed": "100",
+		    "wait_interval": "240"
+                }
+            ]
+        },
+	{
+            "name": "any fan absent",
+            "conditions": [
+                {
+                    "type": "fan.any.absence"
+                }
+            ],
+            "actions": [
+                {
+                    "type": "fan.all.set_speed",
+                    "speed": "100"
+                }
+	    ]
+	},
+	{
+            "name": "greater than one fan absent",
+            "conditions": [
+                {
+                    "type": "fan.greaterthanone.absence"
+                }
+            ],
+            "actions": [
+                {
+                    "type": "fan.all.set_speed",
+                    "speed": "100"
+                },
+                {
+                    "type": "switch.shutdown"
+                }
+            ]
+        },
+	{
+            "name": "atleast one bad fan",
+            "conditions": [
+                {
+                    "type": "fan.atleastone.bad"
+                }
+            ],
+            "actions": [
+                {
+                    "type": "fan.all.set_speed",
+                    "speed": "100"
+                }
+            ]
+        },
+	{
+            "name": "more than three bad fans",
+            "conditions": [
+                {
+                    "type": "fan.greaterthanthree.bad"
+                }
+            ],
+            "actions": [
+                {
+                    "type": "fan.all.set_speed",
+                    "speed": "100"
+                },
+		{
+                    "type": "switch.shutdown"
+                }
+            ]
+        }
+    ]
+}
+

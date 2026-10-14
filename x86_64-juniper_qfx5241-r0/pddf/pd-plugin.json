@@ -1,0 +1,80 @@
+{
+    "PSU": {
+        "name": {
+            "1": "PSU1",
+            "2": "PSU2"
+        },
+        "fan_name": {
+            "1": {
+                "1": "PSU1_FAN1"
+            },
+            "2": {
+                "1": "PSU2_FAN1"
+            }
+        },
+        "thermal_name": {
+            "1": "PSU1_TEMP1",
+            "2": "PSU2_TEMP1"
+        },
+        "psu_present": {
+            "i2c": {
+                "valmap": {
+                    "1": true,
+                    "0": false
+                }
+            }
+        },
+        "psu_power_good": {
+            "i2c": {
+                "valmap": {
+                    "1": true,
+                    "0": false
+                }
+            }
+        },
+        "psu_fan_dir": {
+            "i2c": {
+                "valmap": {
+                    "default": "exhaust"
+                }
+            }
+        },
+        "PSU_FAN_MAX_SPEED_MAP": {
+            "default": "25000"
+        }
+    },
+    "FAN": {
+        "present": {
+            "i2c": {
+                "valmap": {
+                    "1": true,
+                    "0": false
+                }
+            }
+        },
+        "direction": {
+            "i2c": {
+                "valmap": {
+                    "1": "exhaust",
+                    "0": "intake"
+                }
+            }
+        },
+        "duty_cycle_to_pwm": "lambda dc: int((dc * 255) / 100)",
+        "pwm_to_duty_cycle": "lambda pwm: int((pwm * 100) / 255)"
+    },
+    "REBOOT_CAUSE": {
+        "reboot_cause_file": "/host/reboot-cause/reboot-cause.txt"
+    },
+    "LED": {
+        "port_led": {
+            "sysfs_base": "/sys/class/leds",
+            "port_led_format": "fpc0-port{}",
+            "lane_led_format": "fpc0-lane{}",
+            "lanes_per_port": 8,
+            "num_lanes": 8,
+            "link_up_color": "green",
+            "link_down_color": "off"
+        }
+    }
+}

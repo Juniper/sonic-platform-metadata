@@ -79,7 +79,7 @@ class Eeprom(eeprom_tlvinfo.TlvInfoDecoder):
                 if tlv[0] == self._TLV_CODE_VENDOR_EXT:
                     value = str((tlv[2] << 24) | ((tlv[3]) << 16) |
                                 ((tlv[4]) << 8) | (tlv[5]))
-                    value += str(tlv[6:6 + ord(tlv[1])])
+                    value += str(tlv[6:6 + tlv[1]])
                 else:
                     name, value = self.decoder(None, tlv)
 

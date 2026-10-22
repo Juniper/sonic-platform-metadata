@@ -45,7 +45,7 @@
         ],
         "pddf_drv_kos": [],
         "custom_kos": [
-            "jnx-xrefpga-lpcm",
+            "qfx5241-jnx-xrefpga-lpcm",
             "qfx5241-jnx-garnet-core",
             "qfx5241-gpio-garnet",
             "qfx5241-i2c-ocores-garnet",
